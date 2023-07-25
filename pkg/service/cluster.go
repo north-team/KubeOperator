@@ -159,6 +159,7 @@ func (c clusterService) Page(num, size int, isPolling string, user dto.SessionUs
 		if err := d.Count(&page.Total).Order("created_at ASC").
 			Preload("SpecConf").
 			Preload("Nodes").
+			Preload("Secret").
 			Preload("MultiClusterRepositories").
 			Offset((num - 1) * size).Limit(size).Find(&clusters).Error; err != nil {
 			return nil, err
@@ -202,6 +203,7 @@ func (c clusterService) Page(num, size int, isPolling string, user dto.SessionUs
 			Order("created_at ASC").
 			Preload("SpecConf").
 			Preload("Nodes").
+			Preload("Secret").
 			Preload("MultiClusterRepositories").
 			Find(&clusters).Error; err != nil {
 			return nil, err
