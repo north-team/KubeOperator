@@ -2,14 +2,14 @@ FROM golang:1.17 as stage-build
 LABEL stage=stage-build
 WORKDIR /build/ko
 ARG GOPROXY
-ARG GOARCH
+ARG TARGETARCH
 ARG XPACK
 
 ENV GO111MODULE=on \
     GOPROXY=$GOPROXY \
     CGO_ENABLED=1 \
     GOOS=linux \
-    GOARCH=$GOARCH
+    GOARCH=$TARGETARCH
 
 RUN apt-get update && apt-get install unzip
 
@@ -33,7 +33,8 @@ RUN make build_server_linux GOARCH=$GOARCH
 RUN if [ "$XPACK" = "yes" ] ; then  cd xpack && sed -i 's/ ..\/KubeOperator/ \..\/..\/ko/g' go.mod && make build_linux GOARCH=$GOARCH && cp -r dist/* ../dist/  ; fi
 
 FROM ubuntu:20.04
-ARG GOARCH
+ARG TARGETARCH
+ENV GOARCH=$TARGETARCH
 
 RUN apt-get update && \
     apt -y upgrade && \
